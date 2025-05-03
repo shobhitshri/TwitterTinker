@@ -2,6 +2,8 @@
 
 A Chrome extension that hides bias by focusing on **what is being said, rather than who is saying it**
 
+Details here - https://x.com/shri_shobhit/status/1918660119916839314
+
 ## Features
 
 - Hides user names and usernames
