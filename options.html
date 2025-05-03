@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Twitter Info Hider Options</title>
+  <style>
+    body { font-family: sans-serif; margin: 20px; }
+    label { display: block; margin-bottom: 10px; }
+    button { margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h2>Customize What to Hide</h2>
+  <form id="optionsForm">
+    <label><input type="checkbox" id="hideNames"> Hide Names</label>
+    <label><input type="checkbox" id="hideUsernames"> Hide Usernames</label>
+    <label><input type="checkbox" id="hideProfilePics"> Hide Profile Pictures</label>
+    <label><input type="checkbox" id="hideEngagement"> Hide Engagement Counts</label>
+    <button type="submit">Save</button>
+  </form>
+  <div id="status"></div>
+  <script src="options.js"></script>
+</body>
+</html> 
