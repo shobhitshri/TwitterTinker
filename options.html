@@ -4,19 +4,98 @@
   <meta charset="UTF-8">
   <title>Twitter Info Hider Options</title>
   <style>
-    body { font-family: sans-serif; margin: 20px; }
-    label { display: block; margin-bottom: 10px; }
-    button { margin-top: 20px; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 20px;
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 20px;
+      background: #f7f9fa;
+    }
+    h2 { 
+      color: #1da1f2;
+      margin-bottom: 20px;
+    }
+    .option-group {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .option-group h3 {
+      margin-top: 0;
+      color: #14171a;
+    }
+    label { 
+      display: block;
+      margin: 10px 0;
+      color: #14171a;
+      cursor: pointer;
+    }
+    input[type="checkbox"] {
+      margin-right: 8px;
+    }
+    input[type="range"] {
+      width: 100%;
+      margin: 10px 0;
+    }
+    .range-value {
+      color: #657786;
+      font-size: 0.9em;
+    }
+    button { 
+      background: #1da1f2;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+    button:hover {
+      background: #1a91da;
+    }
+    #status {
+      color: #17bf63;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
-  <h2>Customize What to Hide</h2>
+  <h2>Twitter Info Hider Settings</h2>
+  
   <form id="optionsForm">
-    <label><input type="checkbox" id="hideNames"> Hide Names</label>
-    <label><input type="checkbox" id="hideUsernames"> Hide Usernames</label>
-    <label><input type="checkbox" id="hideProfilePics"> Hide Profile Pictures</label>
-    <label><input type="checkbox" id="hideEngagement"> Hide Engagement Counts</label>
-    <button type="submit">Save</button>
+    <div class="option-group">
+      <h3>Content to Hide</h3>
+      <label><input type="checkbox" id="hideNames"> Hide Names</label>
+      <label><input type="checkbox" id="hideUsernames"> Hide Usernames</label>
+      <label><input type="checkbox" id="hideProfilePics"> Hide Profile Pictures</label>
+      <label><input type="checkbox" id="hideEngagement"> Hide Engagement Counts (likes, retweets, replies)</label>
+      <label><input type="checkbox" id="hideViewCount"> Hide View Counts</label>
+      <label><input type="checkbox" id="hideSocialContext"> Hide Social Context (e.g., "X liked this")</label>
+    </div>
+
+    <div class="option-group">
+      <h3>Blur Settings</h3>
+      <label>
+        Blur Intensity
+        <input type="range" id="blurAmount" min="4" max="20" value="12">
+        <span class="range-value" id="blurValue">12px</span>
+      </label>
+    </div>
+
+    <div class="option-group">
+      <h3>Keyboard Shortcuts</h3>
+      <label><input type="checkbox" id="enableShortcuts"> Enable Keyboard Shortcuts</label>
+      <div id="shortcutInfo" style="color: #657786; font-size: 0.9em; margin-top: 10px;">
+        Ctrl + Shift + H: Toggle hiding<br>
+        Ctrl + Shift + R: Reveal all temporarily
+      </div>
+    </div>
+
+    <button type="submit">Save Settings</button>
   </form>
   <div id="status"></div>
   <script src="options.js"></script>

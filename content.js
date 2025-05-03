@@ -2,66 +2,71 @@
 const STYLE_ID = 'twitter-hide-info-style';
 const HIDE_CLASS = 'twitter-hide-info-active';
 
-const css = `
-/* Hide name, username, profile pic, and engagement counts by default */
-body.${HIDE_CLASS} [data-testid="User-Name"],
-body.${HIDE_CLASS} [data-testid="User-Avatar-Container"],
-body.${HIDE_CLASS} [data-testid="User-Avatar-Container"] img,
-body.${HIDE_CLASS} [data-testid="UserAvatar-Container"],
-body.${HIDE_CLASS} [data-testid="UserAvatar-Container"] img,
-body.${HIDE_CLASS} [data-testid="user-avatar"],
-body.${HIDE_CLASS} [data-testid="user-avatar"] img,
-body.${HIDE_CLASS} [data-testid="Tweet-User-Avatar"],
-body.${HIDE_CLASS} [data-testid="app-bar-user-avatar"],
-body.${HIDE_CLASS} [data-testid="app-bar-user-avatar"] img,
-body.${HIDE_CLASS} [data-testid="UserCell"],
-body.${HIDE_CLASS} [data-testid="socialContext"],
-body.${HIDE_CLASS} [data-testid="user-link"],
-body.${HIDE_CLASS} [data-testid="viewCount"],
-body.${HIDE_CLASS} [aria-label*="View"],
-body.${HIDE_CLASS} [href*="/status/"] [role="link"] > div > div > span,
-body.${HIDE_CLASS} [href*="/status/"] [role="link"] > div > div > div > span,
-/* Hide only the like, retweet, and reply counts, not the buttons */
-body.${HIDE_CLASS} [data-testid="like"] span,
-body.${HIDE_CLASS} [data-testid="retweet"] span,
-body.${HIDE_CLASS} [data-testid="reply"] span {
-  filter: blur(12px);
-  transition: filter 0.1s;
-  pointer-events: auto;
-}
-
-/* Reveal on hover */
-body.${HIDE_CLASS} [data-testid="User-Name"]:hover,
-body.${HIDE_CLASS} [data-testid="User-Avatar-Container"]:hover,
-body.${HIDE_CLASS} [data-testid="User-Avatar-Container"]:hover img,
-body.${HIDE_CLASS} [data-testid="UserAvatar-Container"]:hover,
-body.${HIDE_CLASS} [data-testid="UserAvatar-Container"]:hover img,
-body.${HIDE_CLASS} [data-testid="user-avatar"]:hover,
-body.${HIDE_CLASS} [data-testid="user-avatar"]:hover img,
-body.${HIDE_CLASS} [data-testid="Tweet-User-Avatar"]:hover,
-body.${HIDE_CLASS} [data-testid="app-bar-user-avatar"]:hover,
-body.${HIDE_CLASS} [data-testid="app-bar-user-avatar"]:hover img,
-body.${HIDE_CLASS} [data-testid="UserCell"]:hover,
-body.${HIDE_CLASS} [data-testid="socialContext"]:hover,
-body.${HIDE_CLASS} [data-testid="user-link"]:hover,
-body.${HIDE_CLASS} [data-testid="viewCount"]:hover,
-body.${HIDE_CLASS} [aria-label*="View"]:hover,
-body.${HIDE_CLASS} [href*="/status/"] [role="link"] > div > div > span:hover,
-body.${HIDE_CLASS} [href*="/status/"] [role="link"] > div > div > div > span:hover,
-body.${HIDE_CLASS} [data-testid="like"]:hover span,
-body.${HIDE_CLASS} [data-testid="retweet"]:hover span,
-body.${HIDE_CLASS} [data-testid="reply"]:hover span {
-  filter: none !important;
-}
-`;
-
-function injectStyle() {
-  if (!document.getElementById(STYLE_ID)) {
-    const style = document.createElement('style');
-    style.id = STYLE_ID;
-    style.textContent = css;
-    document.head.appendChild(style);
+function generateCSS(options) {
+  const blurAmount = options.blurAmount || 12;
+  
+  let selectors = [];
+  
+  if (options.hideNames) {
+    selectors.push(`body.${HIDE_CLASS} [data-testid="User-Name"]`);
   }
+  if (options.hideUsernames) {
+    selectors.push(`body.${HIDE_CLASS} [data-testid="user-link"]`);
+  }
+  if (options.hideProfilePics) {
+    selectors.push(
+      `body.${HIDE_CLASS} [data-testid="User-Avatar-Container"]`,
+      `body.${HIDE_CLASS} [data-testid="User-Avatar-Container"] img`,
+      `body.${HIDE_CLASS} [data-testid="UserAvatar-Container"]`,
+      `body.${HIDE_CLASS} [data-testid="UserAvatar-Container"] img`,
+      `body.${HIDE_CLASS} [data-testid="user-avatar"]`,
+      `body.${HIDE_CLASS} [data-testid="user-avatar"] img`,
+      `body.${HIDE_CLASS} [data-testid="Tweet-User-Avatar"]`,
+      `body.${HIDE_CLASS} [data-testid="app-bar-user-avatar"]`,
+      `body.${HIDE_CLASS} [data-testid="app-bar-user-avatar"] img`
+    );
+  }
+  if (options.hideEngagement) {
+    selectors.push(
+      `body.${HIDE_CLASS} [data-testid="like"] span`,
+      `body.${HIDE_CLASS} [data-testid="retweet"] span`,
+      `body.${HIDE_CLASS} [data-testid="reply"] span`
+    );
+  }
+  if (options.hideViewCount) {
+    selectors.push(
+      `body.${HIDE_CLASS} [data-testid="viewCount"]`,
+      `body.${HIDE_CLASS} [aria-label*="View"]`
+    );
+  }
+  if (options.hideSocialContext) {
+    selectors.push(
+      `body.${HIDE_CLASS} [data-testid="socialContext"]`,
+      `body.${HIDE_CLASS} [data-testid="UserCell"]`
+    );
+  }
+
+  const baseCSS = `
+    ${selectors.join(',\n')} {
+      filter: blur(${blurAmount}px);
+      transition: filter 0.1s;
+      pointer-events: auto;
+    }
+
+    ${selectors.map(selector => `${selector}:hover`).join(',\n')} {
+      filter: none !important;
+    }
+  `;
+
+  return baseCSS;
+}
+
+function injectStyle(options) {
+  removeStyle();
+  const style = document.createElement('style');
+  style.id = STYLE_ID;
+  style.textContent = generateCSS(options);
+  document.head.appendChild(style);
 }
 
 function removeStyle() {
@@ -69,9 +74,9 @@ function removeStyle() {
   if (style) style.remove();
 }
 
-function setHideActive(active) {
+function setHideActive(active, options) {
   if (active) {
-    injectStyle();
+    injectStyle(options);
     document.body.classList.add(HIDE_CLASS);
   } else {
     document.body.classList.remove(HIDE_CLASS);
@@ -82,15 +87,59 @@ function setHideActive(active) {
 // Listen for messages from popup
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.type === 'TWITTER_HIDE_INFO_TOGGLE') {
-    setHideActive(msg.enabled);
+    chrome.storage.sync.get({
+      hideNames: true,
+      hideUsernames: true,
+      hideProfilePics: true,
+      hideEngagement: true,
+      hideViewCount: true,
+      hideSocialContext: true,
+      blurAmount: 12
+    }, (options) => {
+      setHideActive(msg.enabled, options);
+    });
   }
   if (msg.type === 'REVEAL_ALL_TWITTER_INFO') {
-    setHideActive(false); // Remove all hiding, reveal everything
+    setHideActive(false);
+  }
+});
+
+// Handle keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+  if (e.ctrlKey && e.shiftKey) {
+    chrome.storage.sync.get(['enableShortcuts'], (result) => {
+      if (result.enableShortcuts) {
+        const key = e.key.toLowerCase();
+        if (key === 'h') {
+          chrome.runtime.sendMessage({ type: 'TWITTER_HIDE_INFO_TOGGLE' });
+        } else if (key === 'r') {
+          chrome.runtime.sendMessage({ type: 'REVEAL_ALL_TWITTER_INFO' });
+        }
+      }
+    });
   }
 });
 
 // On load, check storage and set state
-chrome.storage.sync.get(['twitterHideInfoEnabled'], (result) => {
-  const enabled = result.twitterHideInfoEnabled !== false; // default ON
-  setHideActive(enabled);
+chrome.storage.sync.get({
+  twitterHideInfoEnabled: true,
+  hideNames: true,
+  hideUsernames: true,
+  hideProfilePics: true,
+  hideEngagement: true,
+  hideViewCount: true,
+  hideSocialContext: true,
+  blurAmount: 12
+}, (result) => {
+  const enabled = result.twitterHideInfoEnabled;
+  const options = {
+    hideNames: result.hideNames,
+    hideUsernames: result.hideUsernames,
+    hideProfilePics: result.hideProfilePics,
+    hideEngagement: result.hideEngagement,
+    hideViewCount: result.hideViewCount,
+    hideSocialContext: result.hideSocialContext,
+    blurAmount: result.blurAmount
+  };
+  setHideActive(enabled, options);
 }); 
