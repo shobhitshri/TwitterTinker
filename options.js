@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     hideEngagement: true,
     hideViewCount: true,
     hideSocialContext: true,
+    hideVideos: true,
     blurAmount: 12,
     enableShortcuts: true
   }, (result) => {
@@ -25,6 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('hideEngagement').checked = result.hideEngagement;
     document.getElementById('hideViewCount').checked = result.hideViewCount;
     document.getElementById('hideSocialContext').checked = result.hideSocialContext;
+    document.getElementById('hideVideos').checked = result.hideVideos;
     document.getElementById('enableShortcuts').checked = result.enableShortcuts;
 
     // Set blur amount
@@ -48,6 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
       hideEngagement: document.getElementById('hideEngagement').checked,
       hideViewCount: document.getElementById('hideViewCount').checked,
       hideSocialContext: document.getElementById('hideSocialContext').checked,
+      hideVideos: document.getElementById('hideVideos').checked,
       blurAmount: parseInt(blurAmount.value),
       enableShortcuts: document.getElementById('enableShortcuts').checked
     };
