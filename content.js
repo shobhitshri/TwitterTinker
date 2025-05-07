@@ -45,6 +45,14 @@ function generateCSS(options) {
       `body.${HIDE_CLASS} [data-testid="UserCell"]`
     );
   }
+  if (options.hideVideos) {
+    selectors.push(
+      `body.${HIDE_CLASS} [data-testid="videoPlayer"]`,
+      `body.${HIDE_CLASS} [data-testid="videoPlayer"] video`,
+      `body.${HIDE_CLASS} [data-testid="videoPlayer"] div[style*="background-image"]`,
+      `body.${HIDE_CLASS} [data-testid="videoPlayer"] div[style*="background"]`
+    );
+  }
 
   const baseCSS = `
     ${selectors.join(',\n')} {
@@ -55,6 +63,23 @@ function generateCSS(options) {
 
     ${selectors.map(selector => `${selector}:hover`).join(',\n')} {
       filter: none !important;
+      pointer-events: auto !important;
+    }
+
+    body.${HIDE_CLASS} [data-testid="videoPlayer"] {
+      cursor: pointer;
+    }
+
+    body.${HIDE_CLASS} [data-testid="videoPlayer"]:hover {
+      filter: none !important;
+      pointer-events: auto !important;
+    }
+
+    body.${HIDE_CLASS} [data-testid="videoPlayer"]:hover video,
+    body.${HIDE_CLASS} [data-testid="videoPlayer"]:hover div[style*="background-image"],
+    body.${HIDE_CLASS} [data-testid="videoPlayer"]:hover div[style*="background"] {
+      filter: none !important;
+      pointer-events: auto !important;
     }
   `;
 
@@ -94,6 +119,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       hideEngagement: true,
       hideViewCount: true,
       hideSocialContext: true,
+      hideVideos: true,
       blurAmount: 12
     }, (options) => {
       setHideActive(msg.enabled, options);
@@ -129,6 +155,7 @@ chrome.storage.sync.get({
   hideEngagement: true,
   hideViewCount: true,
   hideSocialContext: true,
+  hideVideos: true,
   blurAmount: 12
 }, (result) => {
   const enabled = result.twitterHideInfoEnabled;
@@ -139,7 +166,8 @@ chrome.storage.sync.get({
     hideEngagement: result.hideEngagement,
     hideViewCount: result.hideViewCount,
     hideSocialContext: result.hideSocialContext,
+    hideVideos: result.hideVideos,
     blurAmount: result.blurAmount
   };
   setHideActive(enabled, options);
-}); 
+});
